@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Table</title>
+
+    </head>
+    <body>
+<table border="1px solid black">
+    {% for x in a %}
+    <tr>
+        <td style="width:80px;height:40px;background-color:rgba(255, 0, 0, {{ x }})">
+        </td>
+    <td style="width:80px;height:40px;background-color:rgba(0, 255, 0, {{ x }})">
+        </td>
+    <td style="width:80px;height:40px;background-color:rgba(0, 0, 255, {{ x }})">
+        </td>
+    <td style="width:80px;height:40px;background-color:rgba(0, 0, 0, {{ x }})">
+        </td>
+
+    </tr>
+    {% endfor %}
+</table>
+    </body>
+</html>
