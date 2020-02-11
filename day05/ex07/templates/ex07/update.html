@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Update</title>
+</head>
+<body>
+{% if table %}
+    <form method=POST action=".">{% csrf_token %}
+        <select name="name">
+        {% for elem in table %}
+                <option value="{{ elem.title }}" name="name">{{ elem.title }}</option>
+        {% endfor %}
+        </select>
+        <input type="text" name="txt" value="">
+        <button type=submit>Update</button>
+    </form>
+    {% else %}
+    <h3>No data available</h3>
+{% endif %}
+</body>
+</html>

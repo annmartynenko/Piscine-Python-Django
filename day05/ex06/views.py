@@ -17,15 +17,29 @@ def create_table(request):
         print(result)
     curr = conn.cursor()
     try:
-        curr.execute("""CREATE TABLE IF NOT EXISTS ex04_movies (
+        curr.execute("""CREATE TABLE IF NOT EXISTS ex06_movies (
         episode_nb serial PRIMARY KEY,
         title VARCHAR(64) UNIQUE NOT NULL,
         opening_crawl TEXT ,
         director VARCHAR(32) NOT NULL,
         producer VARCHAR(128) NOT NULL,
-        release_date DATE NOT NULL
+        release_date DATE NOT NULL,
+        created TIMESTAMP DEFAULT NOW(),
+        updated TIMESTAMP DEFAULT NOW()
         );
         """)
+        conn.commit()
+        curr.execute("""CREATE OR REPLACE FUNCTION update_changetimestamp_column()
+        RETURNS TRIGGER AS $$
+        BEGIN
+        NEW.updated = now();
+        NEW.created = OLD.created;
+        RETURN NEW;
+        END;
+        $$ language 'plpgsql';
+        CREATE TRIGGER update_films_changetimestamp BEFORE UPDATE
+        ON ex06_movies FOR EACH ROW EXECUTE PROCEDURE
+        update_changetimestamp_column();""")
         conn.commit()
         conn.close()
         result = 'Ok'
@@ -33,7 +47,7 @@ def create_table(request):
         print(e)
         result = e
 
-    return render(request, 'ex04/index.html', {'result': result})
+    return render(request, 'ex06/index.html', {'result': result})
 
 def insert_data(request):
     conn = 0
@@ -58,7 +72,7 @@ def insert_data(request):
               [7, 'The Force Awakens', 'J. J. Abrams', 'Kathleen Kennedy, J. J. Abrams, Bryan Burk', '2015-12-11']]
 
     curr = conn.cursor()
-    req = "INSERT INTO ex04_movies(episode_nb ,title, director, producer, release_date) VALUES (%d, '%s', '%s', '%s', '%s');"
+    req = "INSERT INTO ex06_movies(episode_nb ,title, director, producer, release_date) VALUES (%d, '%s', '%s', '%s', '%s');"
     for x in values:
         try:
             curr.execute(req % (x[0], x[1], x[2], x[3], x[4]))
@@ -70,7 +84,7 @@ def insert_data(request):
             result.append(x[1])
             result.append(e)
         continue
-    return render(request, 'ex04/insert_data.html', {'result': result})
+    return render(request, 'ex06/insert_data.html', {'result': result})
 
 def display(request):
     conn = 0
@@ -87,44 +101,19 @@ def display(request):
         print(result)
     curr = conn.cursor()
     try:
-        curr.execute("SELECT * FROM ex04_movies")
+        curr.execute("SELECT * FROM ex06_movies")
         table = curr.fetchall()
         conn.close()
     except psycopg2.DatabaseError as e:
         table = 0
         print(e)
-    return render(request, 'ex04/display.html', {'table':table})
-
-
-def delete(request):
-    conn = 0
-    try:
-        conn = psycopg2.connect(
-            database='formationdjango',
-            host='localhost',
-            user='djangouser',
-            password='secret',
-        )
-    except:
-        result = "I am unable to connect to the database."
-        print(result)
-    curr = conn.cursor()
-    try:
-            name = request.POST.get('name', "")
-            query = "DELETE FROM ex04_movies WHERE title='%s';" % name
-            curr.execute(query)
-            rows_deleted = curr.rowcount
-            conn.commit()
-            conn.close()
-    except (Exception, psycopg2.DatabaseError) as e:
-        print(e)
-    return rows_deleted
+    return render(request, 'ex06/display.html', {'table':table})
 
 
 @csrf_exempt
-def remove(request):
+def update(request):
     conn = 0
-    titles = None
+    table = None
     result = list()
     try:
         conn = psycopg2.connect(
@@ -138,12 +127,17 @@ def remove(request):
         print(result)
     curr = conn.cursor()
     try:
-        rows = delete(request)
-        curr.execute("SELECT title FROM ex04_movies;")
-        titles = curr.fetchall()
+        curr.execute("SELECT * FROM ex06_movies;")
+        table = curr.fetchall()
+        conn.commit()
+        name = request.POST.get('name', "")
+        txt = request.POST.get('txt', "")
+        print(name+"  "+txt)
+        curr.execute("UPDATE ex06_movies SET opening_crawl='%s' WHERE title='%s';" % (txt, name))
         conn.commit()
         conn.close()
     except (Exception, psycopg2.DatabaseError) as e:
-        titles = e
+        table = e
         print(e)
-    return render(request, 'ex04/remove.html', {'titles': titles})
+    return render(request, 'ex06/update.html', {'table': table})
+
