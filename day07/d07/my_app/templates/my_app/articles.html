@@ -1,0 +1,21 @@
+{% extends "my_app/base.html" %}
+{% block content %}
+
+<h3>Articles</h3>
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Created date</th>
+            <th>Synopsis</th>
+        </tr>
+        {% for object in latest_articles %}
+            <tr>
+                <td><a href="{% url 'article-detail' pk=object.id %}">{{ object.title }}</a></td>
+                <td>{{ object.author }}</td>
+                <td>{{ object.created }}</td>
+                <td>{{ object.synopsis }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Account</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var $myForm = $('.my-form')
+            var $mylog = $('.logged')
+            var $mybtn = $('.btn')
+            var $form = $('.form')
+
+            $myForm.submit(function (event) {
+                event.preventDefault()
+                var $formData = $(this).serialize()
+                var $thisURL = $myForm.attr('data-url') || window.location.href // or set your own url
+                $.ajax({
+                    method: "POST",
+                    url: $thisURL,
+                    data: $formData,
+                    success: handleFormSuccess,
+                    error: handleFormError,
+                })
+            })
+            $mybtn.click(function () {
+
+                $.ajax({
+                    method: "POST",
+                    url: "/logout/",
+                    success: handleLogoutSuccess,
+                    error: handleLogoutError,
+                })
+            })
+
+            function handleFormSuccess(data, textStatus, jqXHR) {
+                console.log(data)
+                console.log(textStatus)
+                console.log(jqXHR)
+                $('#body').html(data)
+            }
+
+            function handleFormError(jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR)
+                console.log(textStatus)
+                console.log(errorThrown)
+            }
+
+            function handleLogoutSuccess(data) {
+                $('#body').html(data)
+                console.log("logout success")
+            }
+
+            function handleLogoutError() {
+
+            }
+        });
+    </script>
+</head>
+<body id="body">
+
+{% block content %}
+{% endblock %}
+
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Images</title>
+    <link rel="stylesheet" type="text/css" href="{%  static 'myimg/css/mystyle.css' %}">
+</head>
+<body>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload</button>
+</form>
+{% for file in files %}
+    <h3>{{ file.title }}</h3>
+  <img src="{{ file.img.url }}" alt="{{ file.title }}">
+    {% empty %}
+    No file yet.
+{% endfor %}
+</body>
+</html>

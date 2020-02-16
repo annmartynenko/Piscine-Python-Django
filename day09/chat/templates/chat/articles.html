@@ -1,0 +1,17 @@
+{% extends "chat/base.html" %}
+{% block content %}
+
+<h3>Chats</h3>
+    <table>
+        <tr>
+            <th>Number</th>
+            <th>Name</th>
+        </tr>
+        {% for object in latest_articles %}
+            <tr>
+                <td>{{ object.id }}</td>
+                <td><a href="{% url 'room-detail' room_name=object.name %}">{{ object.name }}</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

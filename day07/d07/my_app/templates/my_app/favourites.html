@@ -1,0 +1,8 @@
+{% extends "my_app/base.html" %}
+{% block content %}
+<ol>
+{% for object in latest_articles %}
+    <li><a href="{% url 'article-detail' pk=object.article_id %}">{{ object.article }}</a></li>
+{% endfor %}
+</ol>
+{% endblock %}

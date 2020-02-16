@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Articles</title>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'login' %}">Login</a> |
+        <a href="{% url 'logout' %}">Logout</a> |
+        <a href="{% url 'favourites' %}">Favourites</a>
+    </nav>
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
